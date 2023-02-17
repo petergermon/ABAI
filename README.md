@@ -6,4 +6,5 @@ It automatically installs the following alongside with the installation:
 - dhcpcd
 - iwd
 - sudo
+- systemd-boot
 - yay
