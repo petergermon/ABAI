@@ -81,6 +81,7 @@ echo "editor   no" >> /mnt/boot/loader/loader.conf
 #echo "options  root=PARTUUID=${partuuid} rw" >> /mnt/boot/loader/entries/arch.conf
 #arch-chroot /mnt /bin/bash -c "bootctl --path=/boot update"
 arch-chroot /mnt /bin/bash -c "efibootmgr --create --disk /dev/sda --part 2 --loader \"\EFI\systemd\systemd-bootx64.efi\" --label \"Linux Boot Manager\" --unicode"
+sleep 5s
 
 # Unmount file system and reboot
 umount -R /mnt
