@@ -37,26 +37,14 @@ done
 # Set timezone
 echo "Enter the timezone (e.g. America/Los_Angeles):"
 read timezone
-if [[ ! -e "/usr/share/zoneinfo/$timezone" ]]; then
-  echo "Error: Invalid timezone $timezone"
-exit 1
-fi
 
 # Set locale
 echo "Enter the locale (e.g. en_US.UTF-8):"
 read locale
-if ! locale -a | grep -q "^$locale$"; then
-  echo "Error: Invalid locale $locale"
-exit 1
-fi
 
 # Set keymap
 echo "Enter the keymap (e.g. us):"
 read keymap
-if [[ ! -e "/usr/share/kbd/keymaps/$keymap.map.gz" ]]; then
-  echo "Error: Invalid keymap $keymap"
-exit 1
-fi
 
 # Partition the disk
 sgdisk -Z ${disk}
