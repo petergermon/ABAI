@@ -3,26 +3,60 @@
 # Set parameters
 echo "Enter the disk device (e.g. /dev/sda):"
 read disk
-echo "Enter the hostname:"
-read hostname
-echo "Enter the username:"
-read username
-echo "Enter the password:"
-read -s password
-echo "Enter the root password:"
-read -s rootpassword
+if [[ ! -b "$disk" ]]; then
+  echo "Error: Invalid disk device $disk"
+exit 1
+fi
+
+# Set hostname
+while [[ -z $hostname ]]
+do
+    read -p "Enter the hostname: " hostname
+done
+
+# Set username
+while [[ -z $username ]]
+do
+    read -p "Enter the username: " username
+done
+
+# Set password
+while [[ -z $password ]]
+do
+    read -s -p "Enter the password: " password
+    echo
+done
+
+# Set root password
+while [[ -z $rootpassword ]]
+do
+    read -s -p "Enter the root password: " rootpassword
+    echo
+done
 
 # Set timezone
 echo "Enter the timezone (e.g. America/Los_Angeles):"
 read timezone
+if [[ ! -e "/usr/share/zoneinfo/$timezone" ]]; then
+  echo "Error: Invalid timezone $timezone"
+exit 1
+fi
 
 # Set locale
 echo "Enter the locale (e.g. en_US.UTF-8):"
 read locale
+if ! locale -a | grep -q "^$locale$"; then
+  echo "Error: Invalid locale $locale"
+exit 1
+fi
 
 # Set keymap
 echo "Enter the keymap (e.g. us):"
 read keymap
+if [[ ! -e "/usr/share/kbd/keymaps/$keymap.map.gz" ]]; then
+  echo "Error: Invalid keymap $keymap"
+exit 1
+fi
 
 # Partition the disk
 sgdisk -Z ${disk}
