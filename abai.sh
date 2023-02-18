@@ -67,7 +67,7 @@ arch-chroot /mnt /bin/bash -c "sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL)
 echo "${username} ALL=(ALL:ALL) ALL" >> /mnt/etc/sudoers
 
 # Set PARTUUID for bootloader
-partuuid=$(blkid -s PARTUUID -o value /dev/sda1 | awk '{print $1}')
+partuuid=$(blkid -s PARTUUID -o value /dev/sda2 | awk '{print $1}')
 
 # Install and configure bootloader
 #arch-chroot /mnt /bin/bash -c "pacman -S --noconfirm systemd-boot"
