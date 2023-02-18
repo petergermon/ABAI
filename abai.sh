@@ -35,8 +35,8 @@ mkfs.ext4 ${disk}2
 
 # Mount the file system
 mount ${disk}2 /mnt
-mkdir /mnt/boot
-mount ${disk}1 /mnt/boot
+mkdir /mnt/boot/efi
+mount ${disk}1 /mnt/boot/efi
 
 # Install the base packages
 pacstrap /mnt base base-devel iwd dhcpcd git efibootmgr
@@ -67,20 +67,21 @@ arch-chroot /mnt /bin/bash -c "sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL)
 echo "${username} ALL=(ALL:ALL) ALL" >> /mnt/etc/sudoers
 
 # Set PARTUUID for bootloader
-partuuid=$(blkid -s PARTUUID -o value /dev/sda2 | awk '{print $1}')
+#partuuid=$(blkid -s PARTUUID -o value /dev/sda2 | awk '{print $1}')
 
 # Install and configure bootloader
-arch-chroot /mnt /bin/bash -c "bootctl --path=/boot install"
-echo "default  arch" > /mnt/boot/loader/loader.conf
-echo "timeout  4" >> /mnt/boot/loader/loader.conf
+arch-chroot /mnt /bin/bash -c "bootctl --path=/boot/efi install"
+echo "default arch" > /mnt/boot/loader/loader.conf
+echo "timeout 4" >> /mnt/boot/loader/loader.conf
 echo "console-mode  max" >> /mnt/boot/loader/loader.conf
-echo "editor   no" >> /mnt/boot/loader/loader.conf
-#echo "title    Arch Linux" > /mnt/boot/loader/entries/arch.conf
-#echo "linux    /vmlinuz-linux" >> /mnt/boot/loader/entries/arch.conf
-#echo "initrd   /initramfs-linux.img" >> /mnt/boot/loader/entries/arch.conf
+echo "editor  0" >> /mnt/boot/loader/loader.conf
+echo "title  Arch Linux" > /mnt/boot/loader/entries/arch.conf
+echo "linux  /vmlinuz-linux" >> /mnt/boot/loader/entries/arch.conf
+echo "initrd /initramfs-linux.img" >> /mnt/boot/loader/entries/arch.conf
+echo "options  root=/dev/sda2 rw" >> /mnt/boot/loader/entries/arch.conf
 #echo "options  root=PARTUUID=${partuuid} rw" >> /mnt/boot/loader/entries/arch.conf
-arch-chroot /mnt /bin/bash -c "efibootmgr --create --disk /dev/sda --part 2 --loader \"\EFI\systemd\systemd-bootx64.efi\" --label \"Linux Boot Manager\" --unicode"
-arch-chroot /mnt /bin/bash -c "bootctl --path=/boot update"
+#arch-chroot /mnt /bin/bash -c "efibootmgr --create --disk /dev/sda --part 2 --loader \"\EFI\systemd\systemd-bootx64.efi\" --label \"Linux Boot Manager\" --unicode"
+#arch-chroot /mnt /bin/bash -c "bootctl --path=/boot update"
 
 # Unmount file system and reboot
 umount -R /mnt
