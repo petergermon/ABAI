@@ -65,18 +65,12 @@ arch-chroot /mnt /bin/bash -c "sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL)
 echo "${username} ALL=(ALL:ALL) ALL" >> /mnt/etc/sudoers
 
 # Install and configure bootloader
-arch-chroot /mnt /bin/bash -c "pacman -S --noconfirm systemd-boot"
-arch-chroot /mnt /bin/bash -c "bootctl --path=/boot install"
-echo "default  arch" > /mnt/boot/loader/loader.conf
-echo "timeout  4" >> /mnt/boot/loader/loader.conf
-echo "editor   no" >> /mnt/boot/loader/loader.conf
-echo "title    Arch Linux" > /mnt/boot/loader/entries/arch.conf
-echo "linux    /vmlinuz-linux" >> /mnt/boot/loader/entries/arch.conf
-echo "initrd   /initramfs-linux.img" >> /
-echo "options  root=${disk}2 rw" >> /mnt/boot/loader/entries/arch.conf
+arch-chroot /mnt /bin/bash -c "pacman -S --noconfirm grub efibootmgr"
+arch-chroot /mnt /bin/bash -c "grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=ArchLinux"
+arch-chroot /mnt /bin/bash -c "grub-mkconfig -o /boot/grub/grub.cfg"
 
 # Install yay
-arch-chroot /mnt /bin/bash -c "git clone https://aur.archlinux.org/yay.git /tmp/yay"
+arch-chroot /mnt /bin/bash -c "git clone https://aur.archlinux.org/yay-git.git /tmp/yay"
 arch-chroot /mnt /bin/bash -c "cd /tmp/yay && makepkg -si --noconfirm"
 
 # Unmount file system and reboot
