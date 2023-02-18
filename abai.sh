@@ -71,10 +71,10 @@ partuuid=$(blkid -s PARTUUID -o value /dev/sda2 | awk '{print $1}')
 
 # Install and configure bootloader
 arch-chroot /mnt /bin/bash -c "bootctl --path=/boot install"
-#echo "default  arch" > /mnt/boot/loader/loader.conf
-#echo "timeout  4" >> /mnt/boot/loader/loader.conf
-#echo "console-mode  max" >> /mnt/boot/loader/loader.conf
-#echo "editor   no" >> /mnt/boot/loader/loader.conf
+echo "default  arch" > /mnt/boot/loader/loader.conf
+echo "timeout  4" >> /mnt/boot/loader/loader.conf
+echo "console-mode  max" >> /mnt/boot/loader/loader.conf
+echo "editor   no" >> /mnt/boot/loader/loader.conf
 #echo "title    Arch Linux" > /mnt/boot/loader/entries/arch.conf
 #echo "linux    /vmlinuz-linux" >> /mnt/boot/loader/entries/arch.conf
 #echo "initrd   /initramfs-linux.img" >> /mnt/boot/loader/entries/arch.conf
