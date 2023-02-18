@@ -9,6 +9,8 @@ echo "Enter the username:"
 read username
 echo "Enter the password:"
 read -s password
+echo "Enter the root password:"
+read -s rootpassword
 
 # Set timezone
 echo "Enter the timezone (e.g. America/Los_Angeles):"
@@ -37,7 +39,7 @@ mkdir /mnt/boot
 mount ${disk}1 /mnt/boot
 
 # Install the base packages
-pacstrap /mnt base base-devel iwd dhcpcd
+pacstrap /mnt base base-devel iwd dhcpcd git
 
 # Configure the system
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -53,7 +55,7 @@ echo "::1 localhost" >> /mnt/etc/hosts
 echo "127.0.1.1 ${hostname}.localdomain ${hostname}" >> /mnt/etc/hosts
 
 # Set the root password
-arch-chroot /mnt /bin/bash -c "echo root:${password} | chpasswd"
+arch-chroot /mnt /bin/bash -c "echo root:${rootpassword} | chpasswd"
 
 # Create a user
 arch-chroot /mnt /bin/bash -c "useradd -m -g users -G wheel -s /bin/bash ${username}"
@@ -66,7 +68,7 @@ echo "${username} ALL=(ALL:ALL) ALL" >> /mnt/etc/sudoers
 
 # Install and configure bootloader
 arch-chroot /mnt /bin/bash -c "pacman -S --noconfirm grub efibootmgr"
-arch-chroot /mnt /bin/bash -c "grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=ArchLinux"
+arch-chroot /mnt /bin/bash -c "grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB"
 arch-chroot /mnt /bin/bash -c "grub-mkconfig -o /boot/grub/grub.cfg"
 
 # Install yay
