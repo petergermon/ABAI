@@ -66,20 +66,21 @@ arch-chroot /mnt /bin/bash -c "sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL)
 # Add user to sudoers
 echo "${username} ALL=(ALL:ALL) ALL" >> /mnt/etc/sudoers
 
+# Set PARTUUID for bootloader
+partuuid=$(blkid -s PARTUUID -o value /dev/sda1 | awk '{print $1}')
+
 # Install and configure bootloader
 arch-chroot /mnt /bin/bash -c "pacman -S --noconfirm systemd-boot"
 arch-chroot /mnt /bin/bash -c "bootctl --path=/boot install"
 echo "default  arch" > /mnt/boot/loader/loader.conf
 echo "timeout  4" >> /mnt/boot/loader/loader.conf
+echo "console-mode  max" >> /mnt/boot/loader/loader.conf
 echo "editor   no" >> /mnt/boot/loader/loader.conf
 echo "title    Arch Linux" > /mnt/boot/loader/entries/arch.conf
 echo "linux    /vmlinuz-linux" >> /mnt/boot/loader/entries/arch.conf
 echo "initrd   /initramfs-linux.img" >> /mnt/boot/loader/entries/arch.conf
+echo "options  root=PARTUUID=${partuuid} rw" >> /mnt/boot/loader/entries/arch.conf
 arch-chroot /mnt /bin/bash -c "bootctl --path=/boot update"
-
-# Install yay
-arch-chroot /mnt /bin/bash -c "git clone https://aur.archlinux.org/yay.git /tmp/yay"
-arch-chroot /mnt /bin/bash -c "cd /tmp/yay && makepkg -si --noconfirm"
 
 # Unmount file system and reboot
 umount -R /mnt
