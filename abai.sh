@@ -51,6 +51,10 @@ sgdisk -Z ${disk}
 sgdisk -n 1:0:+512M -t 1:ef00 ${disk}
 sgdisk -n 2:0:0 -t 2:8300 ${disk}
 
+# Label partitions
+sgdisk --change-name=1:boot /dev/sda1
+sgdisk --change-name=2:root /dev/sda2
+
 # Format the partitions
 mkfs.fat -F32 ${disk}1
 mkfs.ext4 ${disk}2
@@ -88,11 +92,15 @@ arch-chroot /mnt /bin/bash -c "sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL)
 # Add user to sudoers
 echo "${username} ALL=(ALL:ALL) ALL" >> /mnt/etc/sudoers
 
+# mkinitcpio
+arch-chroot /mnt /bin/bash -c "mkinitcpio -p linux && mkinitcpio -P"
+
 # Set PARTUUID for bootloader
 #partuuid=$(blkid -s PARTUUID -o value /dev/sda2 | awk '{print $1}')
 
 # Install and configure bootloader
-arch-chroot /mnt /bin/bash -c "bootctl --path=/boot install"
+arch-chroot /mnt /bin/bash -c "bootctl install"
+#arch-chroot /mnt /bin/bash -c "bootctl --path=/boot install"
 echo "default arch" > /mnt/boot/loader/loader.conf
 echo "timeout 4" >> /mnt/boot/loader/loader.conf
 echo "console-mode  max" >> /mnt/boot/loader/loader.conf
@@ -100,10 +108,14 @@ echo "editor  0" >> /mnt/boot/loader/loader.conf
 echo "title  Arch Linux" > /mnt/boot/loader/entries/arch.conf
 echo "linux  /vmlinuz-linux" >> /mnt/boot/loader/entries/arch.conf
 echo "initrd /initramfs-linux.img" >> /mnt/boot/loader/entries/arch.conf
-echo "options  root=/dev/${disk}2 rw" >> /mnt/boot/loader/entries/arch.conf
+echo "options  root=\"LABEL=root\" rw" >> /mnt/boot/loader/entries/arch.conf
+#echo "options  root=/dev/${disk}2 rw" >> /mnt/boot/loader/entries/arch.conf
 #echo "options  root=PARTUUID=${partuuid} rw" >> /mnt/boot/loader/entries/arch.conf
 #arch-chroot /mnt /bin/bash -c "efibootmgr --create --disk /dev/sda --part 2 --loader \"\EFI\systemd\systemd-bootx64.efi\" --label \"Linux Boot Manager\" --unicode"
 #arch-chroot /mnt /bin/bash -c "bootctl --path=/boot update"
+
+# mkinitcpio
+arch-chroot /mnt /bin/bash -c "mkinitcpio -p linux && mkinitcpio -P"
 
 # Unmount file system and reboot
 umount -R /mnt
