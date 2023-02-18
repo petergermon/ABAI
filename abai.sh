@@ -70,7 +70,7 @@ echo "${username} ALL=(ALL:ALL) ALL" >> /mnt/etc/sudoers
 partuuid=$(blkid -s PARTUUID -o value /dev/sda1 | awk '{print $1}')
 
 # Install and configure bootloader
-arch-chroot /mnt /bin/bash -c "pacman -S --noconfirm systemd-boot"
+#arch-chroot /mnt /bin/bash -c "pacman -S --noconfirm systemd-boot"
 arch-chroot /mnt /bin/bash -c "bootctl --path=/boot install"
 echo "default  arch" > /mnt/boot/loader/loader.conf
 echo "timeout  4" >> /mnt/boot/loader/loader.conf
