@@ -35,8 +35,8 @@ mkfs.ext4 ${disk}2
 
 # Mount the file system
 mount ${disk}2 /mnt
-mkdir /mnt/boot/efi
-mount ${disk}1 /mnt/boot/efi
+mkdir /mnt/boot
+mount ${disk}1 /mnt/boot
 
 # Install the base packages
 pacstrap /mnt base base-devel iwd dhcpcd git efibootmgr
@@ -70,7 +70,7 @@ echo "${username} ALL=(ALL:ALL) ALL" >> /mnt/etc/sudoers
 #partuuid=$(blkid -s PARTUUID -o value /dev/sda2 | awk '{print $1}')
 
 # Install and configure bootloader
-arch-chroot /mnt /bin/bash -c "bootctl --path=/boot/efi install"
+arch-chroot /mnt /bin/bash -c "bootctl --path=/boot install"
 echo "default arch" > /mnt/boot/loader/loader.conf
 echo "timeout 4" >> /mnt/boot/loader/loader.conf
 echo "console-mode  max" >> /mnt/boot/loader/loader.conf
@@ -78,7 +78,7 @@ echo "editor  0" >> /mnt/boot/loader/loader.conf
 echo "title  Arch Linux" > /mnt/boot/loader/entries/arch.conf
 echo "linux  /vmlinuz-linux" >> /mnt/boot/loader/entries/arch.conf
 echo "initrd /initramfs-linux.img" >> /mnt/boot/loader/entries/arch.conf
-echo "options  root=/dev/sda2 rw" >> /mnt/boot/loader/entries/arch.conf
+echo "options  root=/dev/${disk}2 rw" >> /mnt/boot/loader/entries/arch.conf
 #echo "options  root=PARTUUID=${partuuid} rw" >> /mnt/boot/loader/entries/arch.conf
 #arch-chroot /mnt /bin/bash -c "efibootmgr --create --disk /dev/sda --part 2 --loader \"\EFI\systemd\systemd-bootx64.efi\" --label \"Linux Boot Manager\" --unicode"
 #arch-chroot /mnt /bin/bash -c "bootctl --path=/boot update"
