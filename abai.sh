@@ -6,27 +6,35 @@ echo "Enter the disk device (e.g. /dev/sda):"
 read disk
 if [[ ! -b "$disk" ]]; then
   echo "Error: Invalid disk device $disk"
-exit 1
+  exit 1
 fi
 
 # Set hostname
 while [[ -z $hostname ]]
 do
     read -p "Enter the hostname: " hostname
+    if [[ -z $hostname ]]
+    then
+        echo "You must enter a hostname."
+    fi
 done
 
 # Set username
 while [[ -z $username ]]
 do
     read -p "Enter the username: " username
+    if [[ -z $username ]]
+    then
+        echo "Username cannot be empty!"
+    fi
 done
 
-# Set password
-while [[ -z $password ]]
-do
-    read -s -p "Enter the password: " password
-    echo
-done
+# Set user password
+read -s -p "Enter the password for $username: " password_confirm
+echo
+if [ "$password" != "$password_confirm" ] ; then
+    read -s -p "Confirm the password: " password_confirm
+fi
 
 # Set root password
 while [[ -z $rootpassword ]]
@@ -35,7 +43,7 @@ do
     echo
 done
 
-# Check if root password is strong enough
+# Check if password is strong enough
 while true
 do
     if [[ ${#rootpassword} -lt 8 ]]; then
