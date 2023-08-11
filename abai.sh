@@ -84,7 +84,7 @@ pacstrap -K /mnt base linux linux-firmware base-devel networkmanager iproute2 iw
 genfstab -U -p /mnt >> /mnt/etc/fstab
 
 # Set locale
-echo "${locale} UTF-8" > /mnt/etc/locale.gen
+echo "${locale}" > /mnt/etc/locale.gen
 arch-chroot /mnt /bin/bash -c "locale-gen"
 echo "LANG=${locale}" > /mnt/etc/locale.conf
 arch-chroot /mnt /bin/bash -c "export LANG=${locale}"
@@ -113,9 +113,6 @@ arch-chroot /mnt /bin/bash -c "echo '${username}:${password}' | chpasswd"
 arch-chroot /mnt /bin/bash -c "sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g' /etc/sudoers"
 echo "Defaults rootpw" >> /mnt/etc/sudoers
 
-# Add user to sudoers
-echo "${username} ALL=(ALL:ALL) ALL" >> /mnt/etc/sudoers
-
 # Install bootloader
 arch-chroot /mnt /bin/bash -c "bootctl install"
 touch /mnt/boot/loader/entries/arch.conf
@@ -132,4 +129,4 @@ arch-chroot /mnt /bin/bash -c "systemctl enable NetworkManager.service"
 
 # Unmount file system and reboot
 umount -R /mnt
-reboot
+# reboot
