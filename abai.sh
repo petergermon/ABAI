@@ -78,7 +78,7 @@ pacman -Sy pacman-contrib --noconfirm
 rankmirrors -n 6 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist
 
 # Install the base packages
-pacstrap -K /mnt base linux linux-firmware base-devel networkmanager iproute2 iwd dhcpcd git nvim sudo htop bash-completion
+pacstrap -K /mnt base linux linux-firmware base-devel networkmanager iproute2 iwd dhcpcd git nano sudo htop bash bash-completion
 
 # Generate fstab
 genfstab -U -p /mnt >> /mnt/etc/fstab
@@ -110,7 +110,7 @@ arch-chroot /mnt /bin/bash -c "echo root:${rootpassword} | chpasswd"
 # Create a user
 arch-chroot /mnt /bin/bash -c "useradd -m -g users -G wheel,storage,power -s /bin/bash ${username}"
 arch-chroot /mnt /bin/bash -c "echo '${username}:${password}' | chpasswd"
-arch-chroot /mnt /bin/bash -c "sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g' /etc/sudoers"
+sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g' /mnt/etc/sudoers
 echo "Defaults rootpw" >> /mnt/etc/sudoers
 
 # Install bootloader
@@ -129,4 +129,4 @@ arch-chroot /mnt /bin/bash -c "systemctl enable NetworkManager.service"
 
 # Unmount file system and reboot
 umount -R /mnt
-# reboot
+#reboot
