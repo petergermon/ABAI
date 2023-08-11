@@ -30,11 +30,11 @@ do
 done
 
 # Set user password
-read -s -p "Enter the password for $username: " password_confirm
-echo
-if [ "$password" != "$password_confirm" ] ; then
-    read -s -p "Confirm the password: " password_confirm
-fi
+while [[ -z $password ]]
+do
+    read -s -p "Enter the password: " password
+    echo
+done
 
 # Set root password
 while [[ -z $rootpassword ]]
