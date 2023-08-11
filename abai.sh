@@ -6,36 +6,27 @@ echo "Enter the disk device (e.g. /dev/sda):"
 read disk
 if [[ ! -b "$disk" ]]; then
   echo "Error: Invalid disk device $disk"
-  exit 1
+exit 1
 fi
 
 # Set hostname
 while [[ -z $hostname ]]
 do
     read -p "Enter the hostname: " hostname
-    if [[ -z $hostname ]]
-    then
-        echo "You must enter a hostname."
-    fi
 done
 
 # Set username
 while [[ -z $username ]]
 do
     read -p "Enter the username: " username
-    if [[ -z $username ]]
-    then
-        echo "Username cannot be empty!"
-    fi
 done
 
-# Set user password
-read -s -p "Confirm the password: " password_confirm
-echo
-if [ "$password" != "$password_confirm" ] ; then
-    echo "Passwords do not match!"
-    read -s -p "Confirm the password: " password_confirm
-fi
+# Set password
+while [[ -z $password ]]
+do
+    read -s -p "Enter the password: " password
+    echo
+done
 
 # Set root password
 while [[ -z $rootpassword ]]
@@ -44,7 +35,7 @@ do
     echo
 done
 
-# Check if password is strong enough
+# Check if root password is strong enough
 while true
 do
     if [[ ${#rootpassword} -lt 8 ]]; then
@@ -62,26 +53,10 @@ done
 # Set timezone
 echo "Enter the timezone (e.g. America/Los_Angeles):"
 read timezone
-while [ -z "$timezone" ]
-do
-    echo "ERROR: Timezone cannot be empty."
-    read timezone
-done
-
-while [ -z "$(timedatectl list-timezones | grep $timezone)" ]
-do
-    echo "ERROR: Timezone is not valid."
-    read timezone
-done
 
 # Set locale
-while true; do
-    echo "Enter the locale (e.g. en_US.UTF-8):"
-    read locale
-    if [ -n $locale ]; then
-        break
-    fi
-done
+echo "Enter the locale (e.g. en_US.UTF-8):"
+read locale
 
 # Zap the disk
 sgdisk --zap-all ${disk}
