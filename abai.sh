@@ -134,6 +134,8 @@ arch-chroot /mnt /bin/bash -c "echo root:${rootpassword} | chpasswd"
 arch-chroot /mnt /bin/bash -c "useradd -m -g users -G wheel,storage,power -s /bin/bash ${username}"
 arch-chroot /mnt /bin/bash -c "echo '${username}:${password}' | chpasswd"
 arch-chroot /mnt /bin/bash -c "sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g' /etc/sudoers"
+echo "" >> /mnt/etc/sudoers
+echo "# abai config" >> /mnt/etc/sudoers
 echo "%wheel ALL=(ALL) ALL" >> /mnt/etc/sudoers
 echo "Defaults rootpw" >> /mnt/etc/sudoers
 
