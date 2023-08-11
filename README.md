@@ -1,5 +1,5 @@
 <h2>abai - A Better Arch Installer</h2>
-abai - A Better Arch Installer is a custom UEFI installer for Arch Linux which installs the minimum dependencies needed to have a fully operational installation without the bloat.
+abai - A Better Arch Installer is a custom UEFI installer for Arch Linux which installs the minimum dependencies needed to have a fully operational install.
 
 It automatically installs the following in this installation:
 - base
