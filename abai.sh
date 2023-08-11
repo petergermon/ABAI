@@ -6,27 +6,36 @@ echo "Enter the disk device (e.g. /dev/sda):"
 read disk
 if [[ ! -b "$disk" ]]; then
   echo "Error: Invalid disk device $disk"
-exit 1
+  exit 1
 fi
 
 # Set hostname
 while [[ -z $hostname ]]
 do
     read -p "Enter the hostname: " hostname
+    if [[ -z $hostname ]]
+    then
+        echo "You must enter a hostname."
+    fi
 done
 
 # Set username
 while [[ -z $username ]]
 do
     read -p "Enter the username: " username
+    if [[ -z $username ]]
+    then
+        echo "Username cannot be empty!"
+    fi
 done
 
-# Set password
-while [[ -z $password ]]
-do
-    read -s -p "Enter the password: " password
-    echo
-done
+# Set user password
+read -s -p "Confirm the password: " password_confirm
+echo
+if [ "$password" != "$password_confirm" ] ; then
+    echo "Passwords do not match!"
+    read -s -p "Confirm the password: " password_confirm
+fi
 
 # Set root password
 while [[ -z $rootpassword ]]
@@ -35,13 +44,44 @@ do
     echo
 done
 
+# Check if password is strong enough
+while true
+do
+    if [[ ${#rootpassword} -lt 8 ]]; then
+        echo "Password is too short. Enter at least 8 characters."
+        read -s -p "Enter the root password again: " rootpassword
+    elif [[ $rootpassword =~ [A-Z] && $rootpassword =~ [a-z] && $rootpassword =~ [0-9] ]]; then
+        break
+    else
+        echo "Password is not strong enough. It should contain at least one uppercase letter, one lowercase letter, and one number."
+        read -s -p "Enter the root password again: " rootpassword
+    fi
+    echo
+done
+
 # Set timezone
 echo "Enter the timezone (e.g. America/Los_Angeles):"
 read timezone
+while [ -z "$timezone" ]
+do
+    echo "ERROR: Timezone cannot be empty."
+    read timezone
+done
+
+while [ -z "$(timedatectl list-timezones | grep $timezone)" ]
+do
+    echo "ERROR: Timezone is not valid."
+    read timezone
+done
 
 # Set locale
-echo "Enter the locale (e.g. en_US.UTF-8):"
-read locale
+while true; do
+    echo "Enter the locale (e.g. en_US.UTF-8):"
+    read locale
+    if [ -n $locale ]; then
+        break
+    fi
+done
 
 # Zap the disk
 sgdisk --zap-all ${disk}
@@ -84,7 +124,7 @@ pacstrap -K /mnt base linux linux-firmware base-devel networkmanager iproute2 iw
 genfstab -U -p /mnt >> /mnt/etc/fstab
 
 # Set locale
-echo "${locale}" > /mnt/etc/locale.gen
+echo "${locale} UTF-8" > /mnt/etc/locale.gen
 arch-chroot /mnt /bin/bash -c "locale-gen"
 echo "LANG=${locale}" > /mnt/etc/locale.conf
 arch-chroot /mnt /bin/bash -c "export LANG=${locale}"
@@ -110,7 +150,8 @@ arch-chroot /mnt /bin/bash -c "echo root:${rootpassword} | chpasswd"
 # Create a user
 arch-chroot /mnt /bin/bash -c "useradd -m -g users -G wheel,storage,power -s /bin/bash ${username}"
 arch-chroot /mnt /bin/bash -c "echo '${username}:${password}' | chpasswd"
-sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g' /mnt/etc/sudoers
+arch-chroot /mnt /bin/bash -c "sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g' /etc/sudoers"
+sed -i "s/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g" /mnt/etc/sudoers
 echo "Defaults rootpw" >> /mnt/etc/sudoers
 
 # Install bootloader
@@ -129,4 +170,4 @@ arch-chroot /mnt /bin/bash -c "systemctl enable NetworkManager.service"
 
 # Unmount file system and reboot
 umount -R /mnt
-#reboot
+reboot
