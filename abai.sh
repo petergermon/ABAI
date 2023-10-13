@@ -120,7 +120,7 @@ arch-chroot /mnt /bin/bash -c "hwclock --systohc --utc"
 echo "${hostname}" > /mnt/etc/hostname
 
 # Enable trim support (SSD's only)
-systemctl enable fstrim.timer
+arch-chroot /mnt /bin/bash -c "systemctl enable fstrim.timer"
 
 # Enable multilib repository
 echo "[multilib]" >> /mnt/etc/pacman.conf
