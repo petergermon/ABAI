@@ -16,3 +16,9 @@ It automatically installs the following in this installation:
 - htop
 - bash
 - bash-completion
+
+KDE Version installs in addition with the above:
+- xorg
+- plasma
+- plasma-wayland-session
+- kde-applications
