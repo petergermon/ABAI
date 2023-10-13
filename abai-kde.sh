@@ -151,7 +151,7 @@ echo "options root=PARTUUID=$(blkid -s PARTUUID -o value /dev/sda3) rw" >> /mnt/
 arch-chroot /mnt /bin/bash -c "systemctl enable dhcpcd.service"
 
 #Enable SDDM
-systemctl enable sddm.service
+arch-chroot /mnt /bin/bash -c "systemctl enable sddm.service"
 
 #Enable NetworkManager
 arch-chroot /mnt /bin/bash -c "systemctl enable NetworkManager.service"
