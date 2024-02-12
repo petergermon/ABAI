@@ -156,10 +156,13 @@ arch-chroot /mnt /bin/bash -c "systemctl enable sddm.service"
 #Enable NetworkManager
 arch-chroot /mnt /bin/bash -c "systemctl enable NetworkManager.service"
 
-# Install yay AUR package manager
-arch-chroot /mnt /bin/bash -c "git clone https://aur.archlinux.org/yay.git /root"
-arch-chroot /mnt /bin/bash -c "cd /root/yay ; makepkg -si"
+# Create install script for yay AUR package manager
+touch /home/${hostname}/install_yay.sh
+echo "#!/bin/bash" > /home/${hostname}/install_yay.sh
+echo "git clone https://aur.archlinux.org/yay.git" >> /home/${hostname}/install_yay.sh
+echo "cd yay ; makepkg -si" >> /home/${hostname}/install_yay.sh
+arch-chroot /mnt /bin/bash -c "chmod +x /home/${hostname}/install_yay.sh"
 
 # Unmount file system and reboot
-#umount -R /mnt
-#reboot
+umount -R /mnt
+reboot
