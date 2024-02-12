@@ -164,5 +164,5 @@ echo "cd yay ; makepkg -si" >> /home/${username}/install_yay.sh
 arch-chroot /mnt /bin/bash -c "chmod +x /home/${username}/install_yay.sh"
 
 # Unmount file system and reboot
-umount -R /mnt
-reboot
+#umount -R /mnt
+#reboot
