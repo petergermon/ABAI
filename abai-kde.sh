@@ -147,6 +147,13 @@ echo "linux /vmlinuz-linux" >> /mnt/boot/loader/entries/arch.conf
 echo "initrd /initramfs-linux.img" >> /mnt/boot/loader/entries/arch.conf
 echo "options root=PARTUUID=$(blkid -s PARTUUID -o value /dev/sda3) rw" >> /mnt/boot/loader/entries/arch.conf
 
+# Create install script for yay AUR package manager
+touch /mnt/home/${username}/install_yay.sh
+echo "#!/bin/bash" > /mnt/home/${username}/install_yay.sh
+echo "git clone https://aur.archlinux.org/yay.git" >> /mnt/home/${username}/install_yay.sh
+echo "cd yay ; makepkg -si" >> /mnt/home/${username}/install_yay.sh
+arch-chroot /mnt /bin/bash -c "chmod +x /home/${username}/install_yay.sh"
+
 #Enable DHCP
 arch-chroot /mnt /bin/bash -c "systemctl enable dhcpcd.service"
 
@@ -156,13 +163,6 @@ arch-chroot /mnt /bin/bash -c "systemctl enable sddm.service"
 #Enable NetworkManager
 arch-chroot /mnt /bin/bash -c "systemctl enable NetworkManager.service"
 
-# Create install script for yay AUR package manager
-touch /mnt/home/${username}/install_yay.sh
-echo "#!/bin/bash" > /mnt/home/${username}/install_yay.sh
-echo "git clone https://aur.archlinux.org/yay.git" >> /mnt/home/${username}/install_yay.sh
-echo "cd yay ; makepkg -si" >> /mnt/home/${username}/install_yay.sh
-arch-chroot /mnt /bin/bash -c "chmod +x /home/${username}/install_yay.sh"
-
 # Unmount file system and reboot
-#umount -R /mnt
-#reboot
+umount -R /mnt
+reboot

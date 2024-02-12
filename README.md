@@ -16,6 +16,7 @@ It automatically installs the following in this installation:
 - htop
 - bash
 - bash-completion
+- yay (Via an installation script placed in the user's home directory)
 
 KDE Version installs in addition with the above:
 - xorg
